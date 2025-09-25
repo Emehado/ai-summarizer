@@ -1,0 +1,5 @@
+
+Summarize the following customer reviews into a short paragraph focusing on positives and negatives
+
+{{joinedReviews}}
+    
