@@ -30,6 +30,7 @@ export const reviewRepository = {
       create: data,
       update: data,
     });
+    return response;
   },
 
   async getReviewSummary(productId: Review['productId']) {

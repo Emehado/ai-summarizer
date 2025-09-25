@@ -41,6 +41,12 @@ export const reviewController = {
         .json({ error: 'Invalid request! There are no reviews to summarize' });
     }
 
+    const existingSummary = await reviewRepository.getReviewSummary(productId);
+
+    if (existingSummary) {
+      return res.json({ summary: existingSummary });
+    }
+
     const summary = await reviewService.summarizeReviews(productId);
 
     res.json({ summary });
