@@ -43,12 +43,17 @@ export const llmClient = {
   },
 
   async summarizeReview(prompt: string) {
-    const ollamaResponse = await ollamaClient.chat({
+    const { message } = await ollamaClient.chat({
       model: 'gpt-oss:20b',
       messages: [{ role: 'user', content: prompt }],
     });
+
+    if (!message?.content) {
+      throw new Error('Ollama chat returned an empty response');
+    }
+
     return {
-      content: ollamaResponse.message.content,
+      content: message.content,
     };
   },
 };
