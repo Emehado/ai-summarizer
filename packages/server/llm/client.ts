@@ -1,8 +1,11 @@
 import OpenAI from 'openai';
+import { Ollama } from 'ollama';
 
 const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
+
+const ollamaClient = new Ollama();
 
 type GenerateText = {
   prompt: string;
@@ -36,6 +39,16 @@ export const llmClient = {
     return {
       id: response.id,
       output_text: response.output_text,
+    };
+  },
+
+  async summarizeReview(prompt: string) {
+    const ollamaResponse = await ollamaClient.chat({
+      model: 'gpt-oss:20b',
+      messages: [{ role: 'user', content: prompt }],
+    });
+    return {
+      content: ollamaResponse.message.content,
     };
   },
 };
