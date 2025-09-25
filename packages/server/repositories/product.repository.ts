@@ -9,4 +9,15 @@ export const productRepository = {
       where: { id: productId },
     });
   },
+
+  async getProducts() {
+    return prisma.product.findMany({
+      include: {
+        _count: {
+          select: { Review: true },
+        },
+      },
+      orderBy: { id: 'desc' },
+    });
+  },
 };
