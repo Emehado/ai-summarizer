@@ -8,7 +8,7 @@ export const reviewController = {
     const productId = Number(req.params.id);
 
     if (isNaN(productId)) {
-      res.status(400).json({ error: 'Invalid Product Id' });
+      return res.status(400).json({ error: 'Invalid Product Id' });
     }
 
     const product = await productRepository.getProduct(productId);
@@ -31,7 +31,7 @@ export const reviewController = {
 
     const response = await productRepository.getProduct(productId);
     if (!response) {
-      return res.status(404).json({ error: 'product not found!' });
+      return res.status(404).json({ error: 'Product not found!' });
     }
 
     const reviews = await reviewRepository.getReviews(productId, 1);

@@ -5,14 +5,13 @@ import template from '../prompts/summarise.txt';
 
 export const reviewService = {
   async summarizeReviews(productId: Review['productId']) {
-    //first check if we have an unexpired generated review summary
-    const reviewSummary = await reviewRepository.getReviewSummary(productId);
-
     const reviews = await reviewRepository.getReviews(productId, 10);
+    if (reviews.length === 0) {
+      throw new Error('No reviews found for this product');
+    }
+
     const joinedReviews = reviews.map((review) => review.content).join('\n\n');
-
     const prompt = template.replace('{{joinedReviews}}', joinedReviews);
-
     const { output_text: summary } = await llmClient.generateText({
       prompt,
       maxToken: 500,
