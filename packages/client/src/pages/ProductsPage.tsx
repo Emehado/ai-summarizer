@@ -1,36 +1,18 @@
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { ProductCard } from '@/components/ProductCard';
 import { ProductCardSkeleton } from '@/components/ProductCardSkeleton';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle } from 'lucide-react';
-
-interface Product {
-  id: number;
-  name: string;
-  description: string | null;
-  price: number;
-  _count: {
-    Review: number;
-  };
-}
-
-interface ProductsResponse {
-  products: Product[];
-}
-
-async function fetchProducts(): Promise<ProductsResponse> {
-  const response = await axios.get('/api/products');
-  return response.data;
-}
+import { trpc } from '@/lib/trpc';
 
 const ProductsPage = () => {
   const navigate = useNavigate();
-  const { data, isLoading, error } = useQuery({
-    queryKey: ['products'],
-    queryFn: fetchProducts,
-  });
+  const {
+    data: products,
+    isLoading,
+    error,
+  } = useQuery(trpc.getProducts.queryOptions());
 
   if (error) {
     return (
@@ -47,14 +29,15 @@ const ProductsPage = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="mb-8 text-3xl font-bold">Products</h1>
+      <h1 className="mb-8 text-3xl font-bold">Products ({products?.length})</h1>
+      <div>{products?.[0].description}</div>
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {isLoading
           ? Array.from({ length: 6 }).map((_, i) => (
               <ProductCardSkeleton key={i} />
             ))
-          : data?.products.map((product) => (
+          : products?.map((product) => (
               <ProductCard
                 key={product.id}
                 product={product}
@@ -63,7 +46,7 @@ const ProductsPage = () => {
             ))}
       </div>
 
-      {data?.products.length === 0 && (
+      {products?.length === 0 && (
         <div className="text-center py-12">
           <p className="text-muted-foreground">No products available.</p>
         </div>
